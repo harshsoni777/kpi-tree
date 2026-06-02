@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title>Metrics Explorer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f1f5f9; --canvas:#ffffff;
+  --panel:#ffffff; --panel2:#f8fafc;
+  --border:#e2e8f0; --border2:#cbd5e1;
+  --text:#0f172a; --muted:#475569; --dim:#94a3b8;
+  --accent:#3b82f6;
+  --green:#16a34a; --green-bg:#dcfce7; --green-bd:#22c55e;
+  --orange:#ea580c; --orange-bg:#ffedd5; --orange-bd:#f97316;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── UPLOAD SCREEN ── */
+#upload-screen{
+  position:fixed;inset:0;z-index:200;
+  background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+}
+#upload-screen.hidden{display:none}
+.upload-box{
+  width:480px;max-width:90vw;
+  border:2px dashed var(--border2);border-radius:16px;padding:48px 32px;text-align:center;
+  background:var(--panel);transition:border-color .2s,background .2s;cursor:pointer;
+}
+.upload-box.drag-over{border-color:var(--accent);background:#eff6ff}
+.upload-icon{font-size:40px;margin-bottom:12px}
+.upload-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
+.upload-sub{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.upload-btn{
+  display:inline-block;font-size:12px;font-weight:600;color:#fff;
+  background:var(--accent);border:none;border-radius:8px;padding:8px 20px;cursor:pointer;
+  font-family:'Inter',sans-serif;
+}
+.upload-btn:hover{background:#2563eb}
+.upload-or{font-size:11px;color:var(--dim);margin:10px 0}
+.server-hint{
+  font-size:11px;color:var(--muted);background:var(--panel2);
+  border:1px solid var(--border);border-radius:10px;padding:10px 16px;
+  font-family:monospace;text-align:left;line-height:1.8;max-width:480px;width:90vw;
+}
+.server-hint strong{color:var(--text);font-family:'Inter',sans-serif}
+input[type=file]{display:none}
+
+/* ── HEADER ── */
+header{
+  flex-shrink:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:8px 16px;background:var(--panel);border-bottom:1px solid var(--border);
+  box-shadow:0 1px 4px rgba(0,0,0,.06);z-index:20;
+}
+.logo{font-size:14px;font-weight:700;letter-spacing:-.3px}
+.logo span{color:var(--accent)}
+.divider{width:1px;height:20px;background:var(--border2);flex-shrink:0}
+
+.slider-group{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:3px 10px;height:26px}
+.slider-lbl{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+input[type=range]{width:70px;accent-color:var(--accent);cursor:pointer}
+
+.pill-row{display:flex;gap:3px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:3px}
+.pill{
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:var(--muted);
+  background:transparent;border:none;border-radius:5px;padding:4px 11px;
+  cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.pill:hover{color:var(--text);background:var(--border)}
+.pill.active{background:var(--accent);color:#fff}
+
+select{
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:var(--text);
+  background:var(--panel2);border:1px solid var(--border2);border-radius:8px;
+  padding:5px 26px 5px 10px;cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;min-width:145px;
+}
+select:focus{outline:none;border-color:var(--accent)}
+.hbtn{
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:500;color:var(--muted);
+  background:var(--panel2);border:1px solid var(--border);border-radius:8px;
+  padding:5px 11px;cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.hbtn:hover{color:var(--text);border-color:var(--border2)}
+.ml{margin-left:auto}
+.csv-info{font-size:10px;color:var(--dim);white-space:nowrap}
+
+/* ── LEGEND ── */
+.leg-bar{
+  flex-shrink:0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:5px 16px;background:var(--panel);border-bottom:1px solid var(--border);font-size:10px;
+}
+.leg-label{color:var(--dim);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.leg-items{display:flex;gap:8px;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:5px;color:var(--muted);cursor:pointer;transition:color .15s}
+.leg-item:hover{color:var(--text)}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ── CANVAS ── */
+#cy{
+  flex:1;width:100%;background:var(--canvas);
+  background-image:radial-gradient(circle,#cbd5e1 1px,transparent 1px);
+  background-size:22px 22px;
+}
+
+/* ── TOOLTIP ── */
+#tip{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  background:var(--panel);border:1px solid var(--border2);border-radius:12px;
+  padding:14px 18px;width:480px;max-width:92vw;
+  box-shadow:0 8px 32px rgba(0,0,0,.12);display:none;z-index:50;pointer-events:none;
+}
+#tip.show{display:block}
+.tip-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px}
+.tip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:5px}
+.tip-cell{background:var(--panel2);border-radius:7px;padding:7px 9px}
+.tip-lbl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:2px}
+.tip-val{font-size:12px;font-weight:600;color:var(--muted)}
+.tip-val.good{color:var(--green)} .tip-val.warn{color:var(--orange)}
+.tip-formula{margin-top:8px;padding:8px 10px;background:var(--panel2);border-left:3px solid var(--border2);border-radius:0 6px 6px 0;font-size:10px;color:var(--muted);line-height:1.6;word-break:break-word}
+
+/* ── ZOOM ── */
+.zoom-ctl{position:fixed;right:16px;bottom:70px;display:flex;flex-direction:column;gap:3px;z-index:30}
+.zoom-btn{
+  width:32px;height:32px;background:var(--panel);border:1px solid var(--border2);
+  border-radius:7px;color:var(--muted);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);
+}
+.zoom-btn:hover{color:var(--text);border-color:var(--accent)}
+.hint{position:fixed;left:16px;bottom:14px;font-size:10px;color:var(--dim);z-index:20;line-height:1.8}
+.trend-arrow{text-shadow:-1.5px -1.5px 0 #fff,1.5px -1.5px 0 #fff,-1.5px 1.5px 0 #fff,1.5px 1.5px 0 #fff}
+</style>
+</head>
+<body>
+
+<!-- ── UPLOAD SCREEN ── -->
+<div id="upload-screen">
+  <div class="upload-box" id="drop-zone">
+    <div class="upload-icon">📊</div>
+    <div class="upload-title">Drop source.csv here</div>
+    <div class="upload-sub">
+      The chart reads directly from your CSV file.<br>
+      Any changes to the CSV will be reflected after re-loading.
+    </div>
+    <label class="upload-btn" for="file-input">Choose CSV file</label>
+    <input type="file" id="file-input" accept=".csv"/>
+    <div class="upload-or">— or serve via HTTP and it loads automatically —</div>
+  </div>
+  <div class="server-hint">
+    <strong>Auto-load (recommended):</strong><br>
+    cd /Users/harsh/allmetrics<br>
+    python3 -m http.server 8080<br>
+    → open http://localhost:8080
+  </div>
+</div>
+
+<!-- ── MAIN APP (hidden until CSV loaded) ── -->
+<div id="app-layout" style="display:none; flex:1; width:100%; overflow:hidden; flex-direction:row;">
+  
+  <!-- LEFT SIDEBAR -->
+  <aside style="width: max-content; background: var(--panel2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto;">
+    
+    <div style="padding: 16px; border-bottom: 1px solid var(--border);">
+      <div class="logo">Metrics <span>Flow</span></div>
+      <div style="font-size: 10px; color: var(--muted); margin-top: 4px;" id="csv-info"></div>
+    </div>
+
+    <!-- Segments -->
+    <div style="padding: 16px; border-bottom: 1px solid var(--border);">
+      <div style="font-size:10px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;">Segment Filter</div>
+      <div class="pill-row" style="flex-direction: column; align-items: stretch; gap: 8px;">
+        <button class="pill active" id="s-b2c"  onclick="setSeg('b2c')">B2C</button>
+        <button class="pill"        id="s-b2b"  onclick="setSeg('b2b')">B2B</button>
+        <button class="pill"        id="s-both" onclick="setSeg('both')">Company Level</button>
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div style="padding: 16px; border-bottom: 1px solid var(--border);">
+      <div style="font-size:10px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;">Metrics</div>
+      <div class="pill-row" id="root-tabs" style="flex-direction: column; align-items: stretch; gap: 8px; border:none; padding:0; background:transparent;"></div>
+    </div>
+    
+  </aside>
+
+  <!-- MAIN WORKSPACE -->
+  <main style="flex:1; display:flex; flex-direction:column; position:relative; overflow:hidden;">
+    
+    <!-- TOP CONTROLS BAR -->
+    <div style="display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; padding:8px 16px; border-bottom:1px solid var(--border); width:100%; background:var(--panel);">
+      <button class="hbtn" onclick="doExpandAll()">Expand All</button>
+      <button class="hbtn" onclick="doCollapseAll()">Collapse All</button>
+      <div class="divider"></div>
+      <button class="hbtn" onclick="resetAll()">Reset</button>
+      <div class="divider"></div>
+      <button class="hbtn" onclick="cy&&cy.fit(undefined,48)">Fit Screen</button>
+    </div>
+
+    <div class="leg-bar" id="app-legend" style="display:flex; justify-content:center;">
+      <span class="leg-label">Status</span>
+      <div class="leg-items">
+        <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>Above target</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#dc2626"></div>Below target</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--dim)"></div>benchmark/target to be added</div>
+      </div>
+    </div>
+
+    <div id="cy-wrapper" style="position:relative; flex:1; width:100%; overflow:hidden">
+      <div id="cy" style="position:absolute; inset:0"></div>
+      <div id="html-overlay" style="position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none; transform-origin: 0 0;"></div>
+    </div>
+
+    <div id="tip">
+      <div class="tip-name" id="tip-name"></div>
+      <div class="tip-grid" id="tip-grid"></div>
+      <div class="tip-formula" id="tip-formula" style="display:none"></div>
+    </div>
+
+    <div class="zoom-ctl" id="app-zoom" style="display:flex;">
+      <button class="zoom-btn" onclick="cy&&cy.zoom({level:cy.zoom()*1.3,renderedPosition:{x:cy.width()/2,y:cy.height()/2}})">+</button>
+      <button class="zoom-btn" onclick="cy&&cy.zoom({level:cy.zoom()*.77,renderedPosition:{x:cy.width()/2,y:cy.height()/2}})">−</button>
+    </div>
+    <div class="hint" id="app-hint" style="display:block;">Click node to expand / collapse &nbsp;·&nbsp; Hover for details &nbsp;·&nbsp; Scroll = zoom &nbsp;·&nbsp; Drag = pan</div>
+
+  </main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CSV PARSER  — handles multiline quoted fields (IFS formulas etc.)
+// ═══════════════════════════════════════════════════════════════
+function parseCSV(raw) {
+  // Normalise line endings
+  const text = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const rows = [];
+  let i = 0, n = text.length;
+
+  while (i < n) {
+    const row = [];
+    // Parse one row
+    while (i < n && text[i] !== '\n') {
+      if (text[i] === '"') {
+        // Quoted field — may span multiple lines
+        i++; // skip opening "
+        let field = '';
+        while (i < n) {
+          if (text[i] === '"') {
+            if (text[i+1] === '"') { field += '"'; i += 2; }   // escaped ""
+            else { i++; break; }                                // closing "
+          } else {
+            field += text[i++];
+          }
+        }
+        row.push(field);
+        if (text[i] === ',') i++;
+      } else {
+        // Unquoted field
+        let field = '';
+        while (i < n && text[i] !== ',' && text[i] !== '\n') field += text[i++];
+        row.push(field.trim());
+        if (text[i] === ',') i++;
+      }
+    }
+    if (text[i] === '\n') i++;
+    if (row.length && row.some(f => f !== '')) rows.push(row);
+  }
+  return rows;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BUILD METRICS from parsed CSV rows
+// Each row becomes one node.  Duplicate original IDs get suffix _2, _3, …
+// Parent references always resolve to the FIRST node with that original id.
+// ═══════════════════════════════════════════════════════════════
+function buildMetrics(csvText) {
+  const rows = parseCSV(csvText);
+  if (rows.length < 2) throw new Error("CSV appears empty or invalid");
+
+  // Map header names → column indices (trim whitespace from headers)
+  const hdrs = rows[0].map(h => h.trim());
+  function col(name) {
+    const i = hdrs.findIndex(h => h.toLowerCase() === name.toLowerCase());
+    if (i === -1) throw new Error(`Column not found: "${name}"`);
+    return i;
+  }
+  const C = {
+    id:      0,
+    parent:  1,
+    metric:  2,
+    formula: 3,
+    why:     4,
+    cadence: 5,
+    b2c:       6,
+    b2c_prev:  7,
+    b2b:       8,
+    b2b_prev:  9,
+    both:      10,
+    both_prev: 11,
+    b2c_bench: 12,
+    b2b_bench: 13,
+    both_bench:14,
+    b2c_own:   16,
+    b2b_own:   17,
+    both_own:  18,
+  };
+
+  const metrics = [];
+  const firstKey = {};  // origId → key of first row seen with that id
+  const idCount  = {};  // origId → how many times seen
+
+  for (let r = 1; r < rows.length; r++) {
+    const row = rows[r];
+    if (!row || row.length < 3) continue;
+
+    const origId = (row[C.id] || '').trim();
+    if (!origId) continue;
+
+    // Unique key
+    idCount[origId] = (idCount[origId] || 0) + 1;
+    const key = idCount[origId] === 1 ? origId : `${origId}_${idCount[origId]}`;
+    if (idCount[origId] === 1) firstKey[origId] = key;
+
+    const g = idx => {
+      const v = (row[idx] || '').trim();
+      return (!v || v.toLowerCase() === 'null') ? null : v;
+    };
+
+    const origParent = (row[C.parent] || '').trim();
+    const pidOrig = (!origParent || origParent.toLowerCase() === 'null') ? null : origParent;
+
+    metrics.push({
+      k:      key,
+      origId: origId,
+      _pidOrig: pidOrig,    // resolved below
+      pid:    null,
+      name:   g(C.metric) || origId,
+      f:      g(C.formula),
+      cad:    g(C.cadence),
+      
+      b2c:       g(C.b2c),
+      b2c_prev:  g(C.b2c_prev),
+      b2c_bench: g(C.b2c_bench),
+      b2c_own:   g(C.b2c_own),
+      
+      b2b:       g(C.b2b),
+      b2b_prev:  g(C.b2b_prev),
+      b2b_bench: g(C.b2b_bench),
+      b2b_own:   g(C.b2b_own),
+      
+      both:       g(C.both),
+      both_prev:  g(C.both_prev),
+      both_bench: g(C.both_bench),
+      both_own:   g(C.both_own),
+    });
+  }
+
+  // Resolve parent keys
+  metrics.forEach(m => {
+    if (m._pidOrig === null) { m.pid = null; return; }
+    m.pid = firstKey[m._pidOrig] || null; // null if parent not found
+  });
+
+  // Compute root of each metric for tabs
+  rootOf = {};
+  function getRoot(k) {
+    if (rootOf[k] !== undefined) return rootOf[k];
+    const m = metrics.find(x => x.k === k);
+    if (!m || m.pid === null) {
+      rootOf[k] = k;
+      return k;
+    }
+    const r = getRoot(m.pid);
+    rootOf[k] = r;
+    return r;
+  }
+  metrics.forEach(m => getRoot(m.k));
+  
+  const rootNodes = metrics.filter(m => m.pid === null);
+  if (rootNodes.length > 0) {
+    activeRoot = rootNodes[0].k;
+  }
+
+  return metrics;
+}
+
+function hasDataForFilter(k, filter) {
+  const m = M.find(x => x.k === k);
+  if (!m) return false;
+  
+  const val = m[filter];
+  
+  if (val && val.toLowerCase() !== 'null') return true;
+  
+  const kids = childMap[k] || [];
+  return kids.some(ck => hasDataForFilter(ck, filter));
+}
+
+function updateTabsForFilter() {
+  if (!M || M.length === 0) return;
+  const rootNodes = M.filter(m => m.pid === null);
+  const validRoots = rootNodes.filter(r => hasDataForFilter(r.k, segFilter));
+  
+  if (!validRoots.find(r => r.k === activeRoot) && validRoots.length > 0) {
+    activeRoot = validRoots[0].k;
+  }
+  
+  buildRootTabs(validRoots);
+}
+
+function buildRootTabs(roots) {
+  const container = document.getElementById('root-tabs');
+  container.innerHTML = '';
+  roots.forEach(r => {
+    const btn = document.createElement('button');
+    btn.className = 'pill ' + (r.k === activeRoot ? 'active' : '');
+    btn.textContent = r.name;
+    btn.onclick = () => {
+      activeRoot = r.k;
+      Array.from(container.children).forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      refresh();
+      cy.fit(undefined, 48);
+    };
+    container.appendChild(btn);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COLOUR UTILITIES
+// ═══════════════════════════════════════════════════════════════
+// Owner colours — fixed palette for known owners, auto-assigned for others
+const KNOWN_OWNER_COLORS = {
+  management: '#6366f1',
+  marketing:  '#db2777',
+  b2b:        '#059669',
+  curriculum: '#d97706',
+  product:    '#2563eb',
+};
+const AUTO_PALETTE = ['#7c3aed','#0891b2','#be185d','#15803d','#b45309','#1d4ed8','#9333ea'];
+const _autoMap = {};
+let _autoIdx = 0;
+
+function ownerColor(raw) {
+  if (!raw) return '#94a3b8';
+  const first = raw.split(',')[0].trim().toLowerCase();
+  if (KNOWN_OWNER_COLORS[first]) return KNOWN_OWNER_COLORS[first];
+  if (!_autoMap[first]) { _autoMap[first] = AUTO_PALETTE[_autoIdx++ % AUTO_PALETTE.length]; }
+  return _autoMap[first];
+}
+function primaryOwner(raw) {
+  if (!raw) return null;
+  return raw.split(',')[0].trim().toLowerCase();
+}
+
+function statusStyle(st) {
+  const s = (st || '').toLowerCase();
+  // Using bold solid colors for extreme contrast
+  if (s === 'green')  return {bg:'#16a34a', bd:'#14532d', text:'#ffffff'};
+  if (s === 'orange' || s === 'red') return {bg:'#dc2626', bd:'#7f1d1d', text:'#ffffff'}; // Solid Red
+  return {bg:'#f1f5f9', bd:'#64748b', text:'#0f172a'}; // Stronger default gray
+}
+
+function calcStatus(m, filter) {
+  if (filter === 'bench' || filter === 'all') return ''; // No comparison for benchmark itself
+  
+  const valStr = m[filter];
+  const benchStr = m[filter + '_bench'];
+  
+  if (!valStr || !benchStr || valStr.toLowerCase() === 'null' || benchStr.toLowerCase() === 'null') {
+    return ''; // default gray if no benchmark or value
+  }
+  
+  // Extract numeric values strictly
+  const vNum = parseFloat(String(valStr).replace(/[^\d.-]/g, ''));
+  const bNum = parseFloat(String(benchStr).replace(/[^\d.-]/g, ''));
+  
+  if (isNaN(vNum) || isNaN(bNum)) return '';
+  
+  if (bNum < 0) {
+    return (vNum < Math.abs(bNum)) ? 'green' : 'orange';
+  }
+  
+  // Assuming higher is better
+  return (vNum >= bNum) ? 'green' : 'red';
+}
+
+function formatMetricValue(v) {
+  if (!v) return '';
+  let str = String(v).trim();
+  if (str.toLowerCase() === 'null') return '';
+
+  // Remove existing commas to prevent double-comma
+  str = str.replace(/,/g, '');
+
+  // Find any numeric segments (with optional decimals) and inject commas
+  return str.replace(/\d+(?:\.\d+)?/g, (match) => {
+    const parts = match.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.join('.');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let M = [];           // all metrics
+let childMap = {};    // key → [child keys]
+let depthMap = {};
+let segFilter = 'b2c';
+let ownFilter = 'all';
+let globalScale = 1;
+let activeRoot = null;
+let rootOf = {};
+const collapsed = new Set();
+let cy = null;
+
+function buildChildMap() {
+  childMap = {};
+  M.forEach(m => {
+    if (m.pid !== null) {
+      if (!childMap[m.pid]) childMap[m.pid] = [];
+      childMap[m.pid].push(m.k);
+    }
+  });
+}
+
+function computeDepths() {
+  depthMap = {};
+  const keyMap = Object.fromEntries(M.map(m => [m.k, m]));
+  function d(k) {
+    if (k in depthMap) return depthMap[k];
+    const m = keyMap[k];
+    if (!m || m.pid === null) return (depthMap[k] = 0);
+    return (depthMap[k] = 1 + d(m.pid));
+  }
+  M.forEach(m => d(m.k));
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FILTER
+// ═══════════════════════════════════════════════════════════════
+function segPass(m) {
+  if (m.pid === null) return true; // Guarantee root nodes are always visible so pages aren't blank
+  let val = '';
+  if (segFilter === 'b2c') val = m.b2c;
+  if (segFilter === 'b2b') val = m.b2b;
+  if (segFilter === 'both') val = m.both;
+  
+  if (!val || val.toLowerCase() === 'null') return false;
+  return true;
+}
+function ownPass(m) {
+  if (ownFilter === 'all') return true;
+  return (m.own || '').toLowerCase().includes(ownFilter);
+}
+function nodePass(m) { return segPass(m) && ownPass(m); }
+
+// Memoised subtree pass
+const _stpCache = {};
+function subtreePass(k) {
+  if (activeRoot !== null && rootOf[k] !== activeRoot) return false;
+  if (k in _stpCache) return _stpCache[k];
+  const m = M.find(x => x.k === k);
+  if (!m) return (_stpCache[k] = false);
+  if (nodePass(m)) return (_stpCache[k] = true);
+  const res = (childMap[k] || []).some(ck => subtreePass(ck));
+  return (_stpCache[k] = res);
+}
+function clearStpCache() { Object.keys(_stpCache).forEach(k => delete _stpCache[k]); }
+
+// Is k hidden because an ancestor is collapsed?
+function hiddenByCollapse(k) {
+  const m = M.find(x => x.k === k);
+  if (!m || m.pid === null) return false;
+  if (collapsed.has(m.pid)) return true;
+  return hiddenByCollapse(m.pid);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BUILD CYTOSCAPE ELEMENTS (Run ONCE)
+// ═══════════════════════════════════════════════════════════════
+function buildAllElements() {
+  const els = [];
+  M.forEach(m => {
+    const sc = statusStyle(calcStatus(m, segFilter));
+    const oc = ownerColor(m.own);
+    const hasKids = (childMap[m.k] || []).length > 0;
+    const d = depthMap[m.k] || 0;
+
+    const nodeW = d === 0 ? 380 : d === 1 ? 340 : 310;
+    
+    // Base height
+    let nodeH = d === 0 ? 100 : 90;
+    if (m.cad && m.f) nodeH += 70;
+    else if (m.cad || m.f) nodeH += 35;
+
+    els.push({
+      group: 'nodes',
+      data: {
+        id: m.k, metric: m,
+        statusBg: sc.bg, statusBd: sc.bd, textColor: sc.text,
+        ownerColor: oc,
+        hasKids, depth: d,
+        nodeW, nodeH,
+      }
+    });
+  });
+
+  M.forEach(m => {
+    if (!m.pid) return;
+    els.push({
+      group: 'edges',
+      data: { id: `e_${m.pid}_${m.k}`, source: m.pid, target: m.k }
+    });
+  });
+
+  return els;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CUSTOM DETERMINISTIC TREE LAYOUT
+// ═══════════════════════════════════════════════════════════════
+function applyCustomLayout(visibleNodes) {
+  if (!visibleNodes || visibleNodes.length === 0) {
+    document.getElementById('html-overlay').innerHTML = '';
+    return;
+  }
+
+  const visibleSet = new Set(visibleNodes.map(n => n.id()));
+
+  // 1. Build tree structure for visible nodes (Preserves CSV order!)
+  const childrenOf = {};
+  const roots = [];
+  M.forEach(m => {
+    if (!visibleSet.has(m.k)) return;
+    childrenOf[m.k] = [];
+    if (m.pid === null || !visibleSet.has(m.pid)) {
+      roots.push(m.k);
+    }
+  });
+  M.forEach(m => {
+    if (!visibleSet.has(m.k)) return;
+    if (m.pid !== null && visibleSet.has(m.pid)) {
+      childrenOf[m.pid].push(m.k);
+    }
+  });
+
+  // 2. Compute Column X offsets based on dynamic node widths
+  const colWidths = {};
+  visibleNodes.forEach(n => {
+    const d = n.data('depth');
+    const w = n.data('nodeW') || 280;
+    colWidths[d] = Math.max(colWidths[d] || 0, w);
+  });
+  const colX = { 0: 0 };
+  const maxD = Math.max(...Object.keys(colWidths).map(Number), 0);
+  const gapX = 240 * globalScale; // padding scales with slider so they never touch
+  const gapY = 80 * globalScale;  // padding scales with slider so they never touch
+  
+  for (let i = 1; i <= maxD; i++) {
+    colX[i] = colX[i-1] + (colWidths[i-1] || 380) + gapX;
+  }
+
+  // 3. Compute Subtree Heights recursively
+  const subtreeHeight = {};
+  function calcHeight(k) {
+    const n = cy.getElementById(k);
+    const h = n.data('nodeH') || 100;
+    const kids = childrenOf[k];
+    if (kids.length === 0) return (subtreeHeight[k] = h);
+    
+    let total = 0;
+    kids.forEach(ck => { total += calcHeight(ck); });
+    total += (kids.length - 1) * gapY;
+    return (subtreeHeight[k] = Math.max(h, total));
+  }
+  roots.forEach(rk => calcHeight(rk));
+
+  // 4. Assign exact positions
+  const posMap = {};
+  let currentY = 0;
+
+  function assignPos(k, startY) {
+    const n = cy.getElementById(k);
+    const h = n.data('nodeH') || 100;
+    const w = n.data('nodeW') || 380;
+    const d = n.data('depth');
+    const kids = childrenOf[k];
+    
+    // Left-to-right flow: X is based on depth column. Center aligned.
+    const x = colX[d] + (w / 2);
+    
+    if (kids.length === 0) {
+      const y = startY + (h / 2);
+      posMap[k] = { x, y };
+      return startY + h;
+    }
+    
+    let childY = startY;
+    kids.forEach(ck => {
+      const ch = subtreeHeight[ck];
+      assignPos(ck, childY);
+      childY += ch + gapY;
+    });
+    
+    const blockHeight = subtreeHeight[k];
+    const y = startY + (blockHeight / 2);
+    posMap[k] = { x, y };
+    return startY + blockHeight;
+  }
+
+  roots.forEach(rk => {
+    const sh = subtreeHeight[rk];
+    assignPos(rk, currentY);
+    currentY += sh + gapY;
+  });
+
+  // Apply instantly
+  cy.batch(() => {
+    visibleNodes.forEach(n => {
+      n.position(posMap[n.id()]);
+    });
+  });
+
+  // Build HTML Overlays for rich text
+  const overlay = document.getElementById('html-overlay');
+  overlay.innerHTML = '';
+  visibleNodes.forEach(n => {
+    const k = n.id();
+    const pos = posMap[k];
+    const m = n.data('metric');
+    const d = n.data('depth');
+    const w = n.data('nodeW');
+    const h = n.data('nodeH');
+    
+    let rawVal = m[segFilter] || '';
+    let rawPrev = m[segFilter + '_prev'] || '';
+    
+    if (m.name === 'EBITDA margin ') {
+      console.log('DEBUG: EBITDA margin ->', segFilter, 'val:', rawVal, 'prev:', rawPrev);
+    }
+    
+    let trend = '';
+    if (rawVal && rawPrev) {
+      const v = String(rawVal).toLowerCase().trim();
+      const p = String(rawPrev).toLowerCase().trim();
+      
+      const vNum = parseFloat(v.replace(/[^\d.-]/g, ''));
+      const pNum = parseFloat(p.replace(/[^\d.-]/g, ''));
+      
+      let invertTrend = false;
+      const bStr = m[segFilter + '_bench'];
+      if (bStr) {
+        const bNum = parseFloat(String(bStr).replace(/[^\d.-]/g, ''));
+        if (!isNaN(bNum) && bNum < 0) invertTrend = true;
+      }
+      
+      const upColor = invertTrend ? '#dc2626' : 'var(--green)';
+      const dnColor = invertTrend ? 'var(--green)' : '#dc2626';
+      
+      const upHtml = ` <span class="trend-arrow" style="color:${upColor}">↑</span>`;
+      const dnHtml = ` <span class="trend-arrow" style="color:${dnColor}">↓</span>`;
+
+      if (!isNaN(vNum) && !isNaN(pNum)) {
+        if (vNum > pNum) trend = upHtml;
+        else if (vNum < pNum) trend = dnHtml;
+      } else if (v === 'up') {
+        trend = upHtml;
+      } else if (v === 'down') {
+        trend = dnHtml;
+      }
+      
+      if (v === 'up' || v === 'down') rawVal = '';
+    }
+    
+    let val = formatMetricValue(rawVal);
+    if (trend) val += trend;
+    
+    const div = document.createElement('div');
+    div.style.position = 'absolute';
+    div.style.width = w + 'px';
+    div.style.height = h + 'px';
+    div.style.left = (pos.x - w/2) + 'px';
+    div.style.top = (pos.y - h/2) + 'px';
+    div.style.display = 'flex';
+    div.style.flexDirection = 'column';
+    div.style.alignItems = 'center';
+    div.style.justifyContent = 'center';
+    div.style.textAlign = 'center';
+    div.style.color = n.data('textColor');
+    div.style.padding = n.data('pad') + 'px';
+    div.style.fontFamily = 'Inter, sans-serif';
+    
+    // Font sizing based on depth and scale
+    const baseF = d === 0 ? 32 : d === 1 ? 28 : 24;
+    const titleSz = baseF * globalScale;
+    const valSz = (baseF + 10) * globalScale; // Value is significantly larger
+    const subSz = (baseF - 4) * globalScale;
+    
+    let html = `<div style="font-size:${titleSz}px; font-weight:${d===0?700 : d===1?600 : 500}">${m.name}</div>`;
+    if (val) {
+      html += `<div style="font-size:${valSz}px; font-weight:800; margin-top:${8*globalScale}px">${val}</div>`;
+    }
+    if (m.cad) {
+      html += `<div style="font-size:${subSz}px; font-weight:500; margin-top:${8*globalScale}px; opacity:0.9">[${m.cad}]</div>`;
+    }
+    
+    if (n.data('hasKids') && collapsed.has(k)) {
+      html += `<div style="position:absolute; right:${12*globalScale}px; top:50%; transform:translateY(-50%); font-size:${(baseF+4)*globalScale}px; opacity:0.5; color:inherit;">▶</div>`;
+    }
+    
+    div.innerHTML = html;
+    overlay.appendChild(div);
+  });
+}
+
+function initCy() {
+  cy = cytoscape({
+    container: document.getElementById('cy'),
+    elements: buildAllElements(),
+    style: [
+      {
+        selector: 'node',
+        style: {
+          shape: 'round-rectangle',
+          width: 'data(nodeW)', height: 'data(nodeH)',
+          'background-color': 'data(statusBg)',
+          'border-width': 2.5, 'border-color': 'data(statusBd)',
+          'transition-property': 'background-color,border-color,opacity',
+          'transition-duration': '0.15s',
+        }
+      },
+      {
+        selector: 'node[depth=0]',
+        style: {
+          'background-color': '#f8fafc', 'border-width': 3,
+          'border-color': 'data(ownerColor)',
+          'color': '#0f172a'
+        }
+      },
+      {
+        selector: 'node.collapsed',
+        style: { 'border-style': 'dashed' }
+      },
+      {
+        selector: '.hidden',
+        style: { 'display': 'none' }
+      },
+      {
+        selector: 'node:active',
+        style: { 'overlay-opacity': 0.06, 'overlay-color': '#000' }
+      },
+      {
+        selector: 'edge',
+        style: {
+          width: 3.5, 'line-color': '#64748b',
+          'target-arrow-color': '#64748b', 'target-arrow-shape': 'triangle',
+          'arrow-scale': 1.1, 'curve-style': 'taxi',
+          'taxi-direction': 'horizontal', 'taxi-turn': 40, opacity: 0.9,
+        }
+      },
+      {
+        selector: 'edge:selected',
+        style: { 'line-color': '#3b82f6', 'target-arrow-color': '#3b82f6' }
+      },
+    ],
+    layout: { name: 'preset' },
+    wheelSensitivity: 0.8, minZoom: 0.05, maxZoom: 4,
+    autounselectify: true,
+  });
+
+  // Intercept trackpad scroll to pan instead of zoom, and increase pan speed.
+  document.getElementById('cy-wrapper').addEventListener('wheel', e => {
+    // ctrlKey is true when pinching on a trackpad
+    if (!e.ctrlKey) {
+      e.stopPropagation();
+      e.stopImmediatePropagation(); // guarantee cytoscape doesn't see it
+      e.preventDefault();
+      cy.panBy({ x: -e.deltaX * 2.5, y: -e.deltaY * 2.5 });
+    }
+  }, { capture: true, passive: false });
+
+  cy.on('pan zoom', () => {
+    const pan = cy.pan();
+    const zoom = cy.zoom();
+    document.getElementById('html-overlay').style.transform = `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`;
+  });
+
+  cy.on('tap', 'node', evt => {
+    const id = evt.target.data('id');
+    if (!evt.target.data('hasKids')) return;
+    if (collapsed.has(id)) collapsed.delete(id); else collapsed.add(id);
+    refresh();
+  });
+  cy.on('mouseover', 'node', evt => showTip(evt.target.data('metric')));
+  cy.on('mouseout',  'node', () => hideTip());
+  
+  // Initial setup: refresh sets labels, sizes, and runs layout
+  refresh();
+  cy.fit(undefined, 48);
+}
+
+function refresh() {
+  if (!cy) return;
+  clearStpCache();
+  
+  const visArr = [];
+  cy.batch(() => {
+    cy.nodes().forEach(n => {
+      const k = n.id();
+      const m = n.data('metric');
+      
+      const isVisible = subtreePass(k) && !hiddenByCollapse(k);
+      if (!isVisible) {
+        n.addClass('hidden');
+        return;
+      }
+      n.removeClass('hidden');
+      visArr.push(n);
+
+      // Dynamically calculate status color for current segment
+      const dynStatus = calcStatus(m, segFilter);
+      const sc = statusStyle(dynStatus);
+      n.data('statusBg', sc.bg);
+      n.data('statusBd', sc.bd);
+      n.data('textColor', sc.text);
+
+      const kids = (childMap[k] || []).filter(ck => subtreePass(ck));
+      const hasKids = kids.length > 0;
+      const isColl = hasKids && collapsed.has(k);
+      
+      if (isColl) n.addClass('collapsed');
+      else n.removeClass('collapsed');
+
+      // Base node sizes
+      const d = n.data('depth');
+      const baseW = d === 0 ? 380 : d === 1 ? 340 : 310;
+      let baseH = d === 0 ? 120 : 110;
+      
+      let val = '';
+      if (segFilter === 'b2c') val = m.b2c;
+      else if (segFilter === 'b2b') val = m.b2b;
+      else if (segFilter === 'both') val = m.both;
+      if (val && val.toLowerCase() === 'null') val = '';
+      
+      if (val) baseH += 40;
+      if (m.cad) baseH += 30;
+      
+      const nodeW = baseW * globalScale;
+      const nodeH = baseH * globalScale;
+      n.data('nodeW', nodeW);
+      n.data('nodeH', nodeH);
+
+      // Padding for HTML div
+      n.data('pad', 18 * globalScale);
+    });
+  });
+
+  applyCustomLayout(cy.collection(visArr));
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TOOLTIP
+// ═══════════════════════════════════════════════════════════════
+function showTip(m) {
+  document.getElementById('tip-name').textContent = m.name;
+  const grid = document.getElementById('tip-grid');
+  grid.innerHTML = '';
+  const fields = [];
+  if (segFilter === 'b2c') {
+    fields.push(['B2C', m.b2c]);
+    fields.push(['Prev Month', m.b2c_prev]);
+  } else if (segFilter === 'b2b') {
+    fields.push(['B2B', m.b2b]);
+    fields.push(['Prev Month', m.b2b_prev]);
+  } else if (segFilter === 'both') {
+    fields.push(['Company Level', m.both]);
+    fields.push(['Prev Month', m.both_prev]);
+  }
+
+  let displayBench = m[segFilter + '_bench'];
+  if (displayBench) {
+    displayBench = String(displayBench).replace('-', '');
+  }
+
+  fields.push(
+    ['Target', displayBench],
+    ['Status',    calcStatus(m, segFilter) ? calcStatus(m, segFilter)[0].toUpperCase() + calcStatus(m, segFilter).slice(1) : null],
+    ['Owner',     m[segFilter + '_own']],
+    ['Cadence',   m.cad]
+  );
+
+  fields.forEach(([lbl, val]) => {
+    if (!val) return;
+    const cls = val.toLowerCase()==='green' ? 'good' : val.toLowerCase()==='red' ? 'warn' : '';
+    const c = document.createElement('div');
+    c.className = 'tip-cell';
+    c.innerHTML = `<div class="tip-lbl">${lbl}</div><div class="tip-val ${cls}">${val}</div>`;
+    grid.appendChild(c);
+  });
+  const fb = document.getElementById('tip-formula');
+  if (m.f) {
+    fb.style.display = 'block';
+    const shortF = m.f.length > 400 ? m.f.slice(0,400)+'…' : m.f;
+    fb.innerHTML = `<strong style="display:block;font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--dim);margin-bottom:4px">Formula</strong>${shortF}`;
+  } else {
+    fb.style.display = 'none';
+  }
+  document.getElementById('tip').classList.add('show');
+}
+function hideTip() { document.getElementById('tip').classList.remove('show'); }
+
+// ═══════════════════════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════════════════════
+
+function resetAll() {
+  segFilter = 'b2c';
+  ownFilter = 'all';
+  globalScale = 1;
+
+  document.getElementById('s-b2c').classList.add('active');
+  ['b2b','both'].forEach(x => document.getElementById('s-'+x).classList.remove('active'));
+  document.getElementById('own-sel').value = 'all';
+
+  collapsed.clear();
+  // Fully expanded by default now
+
+  updateTabsForFilter();
+  refresh();
+  cy.fit(undefined, 48);
+}
+
+function setSeg(s) {
+  segFilter = s;
+  ['b2c','b2b','both'].forEach(x => {
+    const el = document.getElementById('s-'+x);
+    if (x === s) el.classList.add('active');
+    else el.classList.remove('active');
+  });
+  buildOwnerUI();
+  updateTabsForFilter();
+  refresh();
+  cy.fit(undefined, 48);
+}
+function setOwn(v) { ownFilter = v; refresh(); }
+function doExpandAll()  { M.forEach(m => collapsed.delete(m.k)); refresh(); }
+function doCollapseAll(){ M.forEach(m => { if (m.pid) collapsed.add(m.k); }); refresh(); }
+
+// ═══════════════════════════════════════════════════════════════
+// OWNER UI — built dynamically from parsed CSV owners
+// ═══════════════════════════════════════════════════════════════
+function buildOwnerUI() {
+  const owners = [...new Set(M.map(m => primaryOwner(m[segFilter + '_own'])).filter(Boolean))].sort();
+
+  const sel = document.getElementById('own-sel');
+  if (sel) {
+    // Clear existing options beyond "All Owners"
+    while (sel.options.length > 1) sel.remove(1);
+    owners.forEach(o => {
+      const opt = document.createElement('option');
+      opt.value = o;
+      opt.textContent = o.charAt(0).toUpperCase() + o.slice(1);
+      sel.appendChild(opt);
+    });
+  }
+
+  const leg = document.getElementById('own-leg');
+  if (!leg) return;
+  leg.innerHTML = '';
+  owners.forEach(o => {
+    const item = document.createElement('div');
+    item.className = 'leg-item';
+    item.innerHTML = `<div class="leg-dot" style="background:${ownerColor(o)}"></div>${o.charAt(0).toUpperCase()+o.slice(1)}`;
+    item.addEventListener('click', () => {
+      ownFilter = o;
+      document.getElementById('own-sel').value = o;
+      refresh();
+    });
+    leg.appendChild(item);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT — called after CSV is loaded
+// ═══════════════════════════════════════════════════════════════
+function initApp(csvText, filename) {
+  // Parse
+  M = buildMetrics(csvText);
+
+  // Build helpers
+  buildChildMap();
+  computeDepths();
+
+  collapsed.clear();
+  // Only show up to 6 levels deep initially (collapse depth 5 and deeper)
+  M.forEach(m => {
+    if (depthMap[m.k] >= 5) collapsed.add(m.k);
+  });
+  
+  updateTabsForFilter();
+
+  // UI
+  document.getElementById('csv-info').textContent = `${filename}  ·  ${M.length} nodes`;
+  buildOwnerUI();
+
+  // Show app
+  document.getElementById('upload-screen').classList.add('hidden');
+  document.getElementById('app-layout').style.display = 'flex';
+
+  // Init or re-init Cytoscape
+  if (cy) { cy.destroy(); cy = null; }
+  initCy();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// LOADING — fetch (HTTP) or file input (file://)
+// ═══════════════════════════════════════════════════════════════
+// 1. Try auto-fetch first
+fetch('./source.csv?t=' + new Date().getTime())
+  .then(r => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.text();
+  })
+  .then(text => initApp(text, 'source.csv'))
+  .catch(() => {
+    // Auto-fetch failed (probably file:// protocol) — show upload screen
+    document.getElementById('upload-screen').classList.remove('hidden');
+  });
+
+// 2. File input (manual)
+document.getElementById('file-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => initApp(ev.target.result, file.name);
+  reader.readAsText(file);
+});
+
+// 3. Drag-and-drop
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => initApp(ev.target.result, file.name);
+  reader.readAsText(file);
+});
+</script>
+</body>
+</html>

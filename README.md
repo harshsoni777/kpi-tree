@@ -4,6 +4,10 @@ A simple browser-based tool to visualize hierarchical business metrics as an int
 
 Compared to a flat spreadsheet or dashboard, a value tree makes metric dependencies and relationships immediately visible.
 
+
+<img width="1489" height="821" alt="image" src="https://github.com/user-attachments/assets/4aace069-5cc0-4c58-af8c-871255a1a422" />
+
+
 ## Use Cases
 - Trace downstream issues to their upstream drivers (e.g., identify which lever is causing a red metric).
 - Assess the impact of improving a metric by seeing what it influences downstream.

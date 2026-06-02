@@ -1,4 +1,4 @@
-# Metrics Flow Explorer
+# KPI Tree
 
 A simple browser-based tool to visualize hierarchical business metrics as an interactive tree graph.
 

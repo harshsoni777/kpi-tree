@@ -183,6 +183,14 @@ select:focus{outline:none;border-color:var(--accent)}
       </div>
     </div>
 
+    <!-- Owners -->
+    <div style="padding: 16px; border-bottom: 1px solid var(--border);">
+      <div style="font-size:10px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;">Owner Filter</div>
+      <select id="own-sel" onchange="setOwn(this.value)" style="width:100%; padding:8px; border:1px solid var(--border2); border-radius:4px; outline:none; font-family:'Inter',sans-serif; background:var(--canvas); color:var(--text);">
+        <option value="all">All Owners</option>
+      </select>
+    </div>
+
     <!-- Metrics -->
     <div style="padding: 16px; border-bottom: 1px solid var(--border);">
       <div style="font-size:10px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;">Metrics</div>
@@ -559,7 +567,7 @@ function segPass(m) {
 }
 function ownPass(m) {
   if (ownFilter === 'all') return true;
-  return (m.own || '').toLowerCase().includes(ownFilter);
+  return (primaryOwner(m[segFilter + '_own']) || '').includes(ownFilter);
 }
 function nodePass(m) { return segPass(m) && ownPass(m); }
 
@@ -1046,12 +1054,17 @@ function setSeg(s) {
     if (x === s) el.classList.add('active');
     else el.classList.remove('active');
   });
+  ownFilter = 'all';
   buildOwnerUI();
   updateTabsForFilter();
   refresh();
   cy.fit(undefined, 48);
 }
-function setOwn(v) { ownFilter = v; refresh(); }
+function setOwn(v) { 
+  ownFilter = v; 
+  if (v !== 'all') doExpandAll();
+  else refresh(); 
+}
 function doExpandAll()  { M.forEach(m => collapsed.delete(m.k)); refresh(); }
 function doCollapseAll(){ M.forEach(m => { if (m.pid) collapsed.add(m.k); }); refresh(); }
 

@@ -1,5 +1,340 @@
 id,parent,metric,formula,why,cadence,B2C value/trend,B2C prev month,B2B value/trend,B2B prev month,B2C + B2B value/trend,B2C +B2B prev month,B2C benchmarks,B2B benchmarks,B2C + B2B benchmarks,benchmark source,B2C owner,B2B owner,B2C + B2B owner
 1,null,Growth and Retention,null,,null,null,null,null,null,null,null,null,null,null,,null,null,null
 2,null,Efficiency,null,,null,null,null,null,null,null,null,null,null,null,,null,null,null
-3,1,Retention,null,,Monthly,80%,75%,85%,82%,82%,78%,75%,80%,null,,Product,Product,Product
-4,2,CAC,null,,Monthly,$50,$55,$100,$110,$75,$82,$60,$120,null,,Marketing,Marketing,Marketing
+3,null,Course offerings,null,,null,null,null,null,null,null,null,null,null,null,,null,null,null
+4,null,Profit and OPEX,null,,null,null,null,null,null,null,null,null,null,null,,null,null,null
+5,null,Environment,null,,null,null,null,null,null,null,null,null,null,null,,null,null,null
+6,5,Revenue growth,QoQ,,Quarterly,null,null,trending down,trending down,null,null,null,trending down,null,"Pitchbook Enterprise SaaS Public Comp Sheet and Valuation Guide, Chartmogul, High Alpha SaaS Benchmarks ",null,B2B,null
+7,5,EBITDA,per Q,,Quarterly,null,null,flat trend,flat trend,null,null,null,trending up,null,"Pitchbook Enterprise SaaS Public Comp Sheet and Valuation Guide, Chartmogul, High Alpha SaaS Benchmarks ",null,B2B,null
+8,3,Revenue by segments,null,Directional view of what course segments are driving revenue,Monthly,null,null,null,null,null,null,null,null,null,,Content,Content,null
+9,8,Placeholder,null,,Monthly,39%,39%,41%,41%,null,null,30%,30%,30%,,Content,Content,null
+10,8,Placeholder,null,,Monthly,22%,22%,21%,21%,null,null,20%,20%,20%,,Content,Content,null
+11,8,Placeholder,null,,Monthly,11%,11%,11%,11%,null,null,20%,20%,20%,,Content,Content,null
+12,8,Placeholder,null,,Monthly,10%,10%,13%,13%,null,null,15%,15%,15%,,Content,Content,null
+13,8,Placeholder,null,,Monthly,9%,9%,1%,1%,null,null,10%,10%,10%,,Content,Content,null
+14,8,Placeholder,null,,Monthly,3%,3%,7%,7%,null,null,10%,10%,10%,,Content,Content,null
+15,8,Placeholder,null,,Monthly,1%,1%,2%,2%,null,null,2%,2%,2%,,Content,Content,null
+16,8,Placeholder,null,,Monthly,1%,1%,0%,0%,null,null,2%,2%,2%,,Content,Content,null
+17,8,Placeholder,null,,Monthly,4%,4%,6%,6%,null,null,0%,0%,0%,,Content,Content,null
+18,4,Gross profit margin ,(revenue - COS)/revenue,,Quarterly,null,null,null,null,86%,86%,85%,85%,85%,,Management,Management,Management
+19,4,Contribution margin,(gross margin - variable costs)/revenue,,Quarterly,null,null,null,null,82%,82%,80%,80%,80%,,Management,Management,Management
+20,4,Operating profit margin ,(contributipn margin - fixed costs)/revenue,,Quarterly,null,null,null,null,3%,3%,3%,3%,3%,,Management,Management,Management
+21,4,EBITDA margin ,(operating profit + other income)/revenue,,Quarterly,4%,3,0%,0%,4,3,5%,5%,5%,,Management,Management,Management
+22,4,Free cash flow margin ,free cash flow / revenue,,Quarterly,null,null,null,null,10%,10%,10%,5%,10%,,Management,Management,Management
+23,4,Rule of 40,YoY ARR Growth + EBTIDA,,Quarterly,50,45,30%,25,45%,38%,70,40%,40%,,Management,Management,Management
+24,20,S&M as % of revenue,S&M as % of revenue,,Quarterly,null,null,null,null,30%,30%,40%,40%,40%,,Management,Management,Management
+25,20,R&D as % of revenue,R&D as % of revenue,,Quarterly,null,null,null,null,30%,31%,-20%,-20%,-20%,,Management,Management,Management
+26,20,G&A as % of revenue,G&A as % of revenue,,Quarterly,null,null,null,null,30%,32%,-20%,-20%,-20%,,Management,Management,Management
+27,2,LTV:CAC,LTV:CAC,,Monthly,2,1,2.5,1,null,null,3,3,null,,Marketing,B2B,null
+28,2,CAC payback,CAC / ARPA,,Monthly,2,2,12,13.00%,null,null,-12,-12,null,,Marketing,B2B,null
+29,2,Cost of New + Expansion ARR,(New + Exp ARR) / total acqusition spend ,,Quarterly,null,null,0.7,0.7,null,null,1,1,null,,null,B2B,null
+30,2,Cost of Net New ARR,Net New ARR / total acqusition spend ,,Quarterly,null,null,0.76,0.76,null,null,1,1,null,,null,B2B,null
+31,2,Magic number,(Recurring Revenue this quarter - Recurring Revenue previous quarter) × 4 ÷ Sales & Marketing spend from previous quarter,,Quarterly,null,null,0.7,0.7,null,null,1,1,null,,null,B2B,null
+32,2,New + Expansion ARR / AE ,New + Expansion ARR / AE ,,Quarterly,null,null,250000,250000,null,null,"$280,000","$280,000","$280,000",,null,B2B,null
+33,2,ROAS,,,Monthly,,,null,null,null,null,,null,,,Marketing,null,null
+34,2,ARR per FTE,ARR/FTE,,Quarterly,,,,,,,,,,,Management,B2B,Management
+35,2,ACV,contract value / contract length ,,Quarterly,null,null,,,,,,,,,null,B2B,null
+36,27,LTV,1/churn * ARPU or ARPA,,Monthly,$242,$299,10000,10000,null,null,242,10000,null,,Marketing,B2B,null
+37,27,CAC,total acquisition spend / users or accounts ,,Monthly,$55,$58,"$3,680",3539,null,null,55,1500,null,,Marketing,B2B,null
+37,28,CAC,total acquisition spend / users or accounts ,,Monthly,$55,$58,"$3,680",3539,null,null,55,1500,null,,Marketing,B2B,null
+38,28,ARPA/ARPU,New ARR or MRR / new users or accounts,,Monthly,$22,$22,5000,4500,null,null,$30,"$5,000",null,,Marketing,B2B,null
+39,38,Seats per account,new seats / new accounts,,Monthly,null,null,30,45,null,null,null,20,null,,null,B2B,null
+40,38,ARPS,New ARR or MRR / seats,,Monthly,null,null,5000,600,null,null,null,$400,null,,null,B2B,null
+41,35,Average contract value,contract value / contract length ,,Monthly,null,null,,,,,,,,,null,B2B,null
+42,35,Average contract length in years,null,,Monthly,null,null,,,,,,,,,null,B2B,null
+43,37,total acqusition spend,B2B salaries and growth expenses ,,Monthly,400000,450000,100000,120000,null,null,null,null,null,,Marketing,B2B,null
+44,37,new users / new accounts,null,,Monthly,2831,2611,100,90,null,null,3500,50,null,,Marketing,B2B,null
+38,36,ARPA/ARPU,New ARR or MRR / new users or accounts,,Monthly,$22,$22,"$2,744",1932,null,null,$30,"$5,000",null,,Marketing,B2B,null
+45,36,% Churn,churned / up for renewal,,Monthly,,,0%,9.00%,null,null,,-30%,,,Marketing,B2B,null
+46,36,LTV by lead channels,1/churn * ARPU or ARPA,,Monthly,,,,,null,null,,,,,Marketing,B2B,null
+47,36,Realized LTV by cohort month,actual spend on platform ,,L12M,,,null,null,null,null,,,,,Marketing,null,null
+48,1,ARR/MRR,ending mrr * 12 or ending ARR from waterfall,,Monthly,1800000,17500000,5000000,6000000,23000000,23400000,50000000,10000000,"$20,000,000",,Marketing,B2B,Management
+49,1,YoY ARR/MRR growth,delta vs same month last year,,Monthly,50%,45%,60%,70%,30%,30%,30%,100%,30%,,Marketing,B2B,Management
+50,1,Revenue,as reported by finance,,,,,,,,,,,,,Marketing,B2B,Management
+51,1,Branding,null,,Quarterly,null,null,null,null,null,null,null,null,null,,Marketing,null,null
+52,51,brand awareness per target segment,% SOM/SAM,,Quarterly,,,null,null,null,null,,,,,Marketing,B2B,null
+53,51,brand perception per target segment,survey: “What topics do you associate with this platform?” % of respondents that select a topic (multiple allowed),,Quarterly,,,null,null,null,null,,,,,Marketing,B2B,null
+68,48,Net New ARR/MRR,new+resub+exp-contraction-churn,,Monthly,30000,30000,28000,39310,null,null,10000,65000,,,Marketing,B2B,null
+69,68,New ARR/MRR,new users/accounts,,Monthly,150000,150000,28000,50221,null,null,80000,71000,,,Marketing,B2B,null
+70,68,Resubscription ARR/MRR,those that churned and came back,,Monthly,"$27,500","$27,500",null,null,null,null,25000,0,,,Marketing,B2B,null
+71,68,Expansion ARR/MRR,MRR/ARR positive delta,,Monthly,"$6,000","$6,000","$17,000","$17,000",null,null,null,"$22,100",,,Marketing,B2B,null
+72,68,Contraction ARR/MRR,MRR/ARR negative delta,,Monthly,"$5,000","$5,000","$4,700","$4,700",null,null,null,"$4,700",,,Marketing,B2B,null
+73,68,Churn ARR/MRR,users/accoutns churned ,,Monthly,70000,70000,30000,10911,null,null,-70000,19000,,,Marketing,B2B,null
+74,68,Quick ratio,(New + Resub + Exp) / (Cont + Churn),,Monthly,null,null,3,3,null,null,null,4,null,,null,B2B,null
+75,68,GRR,(Starting - Churn) / Starting,,Monthly,null,null,91,91,null,null,null,95,null,,null,B2B,null
+76,68,NRR,(Starting - Churn + Exp) / Starting,,Monthly,null,null,97,97,null,null,null,104,null,,null,B2B,null
+77,69,refund rate,,,Monthly,,,null,,,,,null,,,"Product, Curriculum",null,null
+78,69,new accounts / paid users,first time,,Monthly,2831,2611,25,26,null,null,3500,,,,Marketing,B2B,null
+38,69,ARPA/ARPU,New ARR or MRR / new users or accounts,,Monthly,22%,22%,5000,4500,null,null,$30,"$5,000",null,,Marketing,B2B,null
+79,39,seats per segment,count,,Monthly,null,null,,,null,null,null,,,,null,B2B,null
+80,39,seats per channel,count,,Monthly,null,null,,,null,null,null,,,,null,B2B,null
+82,78,accounts/users per segments,count,,Monthly,null,null,,,null,null,null,,,,null,B2B,null
+84,78,accounts/users per region,count,,Monthly,null,null,,,null,null,,,,,Marketing,B2B,null
+85,78,pipeline metrics,,,Monthly,null,null,,,null,null,null,,,,null,B2B,null
+86,87,users by plan length ,count,,Monthly,,,null,,,,,null,,,Marketing,null,null
+87,78,users by plan ,count,,Monthly,,,null,,,,,null,,,Marketing,null,null
+88,78,accounts/users by lead channel ,count,,Monthly,null,null,null,null,null,null,null,null,null,,Marketing,null,null
+89,78,users by job role ,count,,Monthly,,,null,,,,,null,,,Marketing,null,null
+90,88,Placeholder,null,,Monthly,490,594,null,null,null,null,588,null,,,Marketing,null,null
+91,88,Placeholder,null,,Monthly,218,243,null,null,null,null,261.6,null,,,Marketing,null,null
+92,88,Placeholder,null,,Monthly,270,314,null,null,null,null,270,null,,,Marketing,null,null
+93,88,Placeholder,null,,Monthly,102,132,null,null,null,null,122.4,null,,,Marketing,null,null
+94,88,Placeholder,null,,Monthly,16,33,null,null,null,null,19.2,null,,,Marketing,null,null
+95,88,Placeholder,null,,Monthly,34,30,null,null,null,null,40.8,null,,,Marketing,null,null
+96,88,Placeholder,null,,Monthly,31,27,null,null,null,null,37.2,null,,,Marketing,null,null
+97,88,Placeholder,null,,Monthly,102,125,null,null,null,null,122.4,null,,,Marketing,null,null
+98,88,Placeholder,null,,Monthly,27,24,null,null,null,null,32.4,null,,,Marketing,null,null
+99,88,Placeholder,null,,Monthly,13,21,null,null,null,null,15.6,null,,,Marketing,null,null
+100,88,Placeholder,null,,Monthly,47,46,null,null,null,null,56.4,null,,,Marketing,null,null
+101,88,Placeholder,null,,Monthly,12,6,null,null,null,null,14.4,null,,,Marketing,null,null
+102,88,Placeholder,null,,Monthly,3,7,null,null,null,null,3.6,null,,,Marketing,null,null
+103,88,Placeholder,null,,Monthly,0,2,null,null,null,null,5,null,,,Marketing,null,null
+90,78,conversion rate by cohort month,converted / signups,,Monthly,,,null,null,null,null,,null,,,Marketing,null,null
+91,78,total signups,count,,Monthly,30212,28696,null,null,null,null,40000,null,40000,,Marketing,null,null
+92,78,30D conversion rate by channel,converted / signups,,Monthly,,,null,null,null,null,,null,,,Marketing,null,null
+93,78,Signups by channel,count,,Monthly,,,null,null,null,null,,null,,,Marketing,null,null
+124,84,Users/accounts from Western Europe,"IFS(
+D2=""US"",""North America"",
+D2=""CA"",""North America"",
+D2=""IN"",""India"",
+
+OR(D2=""SG"",D2=""MY"",D2=""ID"",D2=""TH"",D2=""VN"",D2=""PH""),""Southeast Asia"",
+
+OR(D2=""AU"",D2=""NZ"",D2=""JP"",D2=""KR"",D2=""CN"",D2=""HK"",D2=""TW""),""rest of APAC"",
+
+OR(D2=""BR"",D2=""MX"",D2=""AR"",D2=""CL"",D2=""CO"",D2=""PE""),""LATAM"",
+
+OR(D2=""AE"",D2=""SA"",D2=""QA"",D2=""KW"",D2=""OM"",D2=""BH"",D2=""IL""),""Middle East"",
+
+OR(D2=""ZA"",D2=""NG"",D2=""KE"",D2=""EG"",D2=""GH"",D2=""MA""),""Africa"",
+
+OR(D2=""UK"",D2=""DE"",D2=""FR"",D2=""NL"",D2=""BE"",D2=""CH"",D2=""AT"",D2=""IE"",D2=""ES"",D2=""PT"",D2=""IT"",D2=""SE"",D2=""NO"",D2=""DK"",D2=""FI""),""Western Europe"",
+
+OR(D2=""PL"",D2=""CZ"",D2=""HU"",D2=""RO"",D2=""BG"",D2=""SK"",D2=""HR"",D2=""SI"",D2=""RS"",D2=""UA""),""Eastern Europe"",
+
+TRUE,""RoW""
+)",,Monthly,,,50%,45%,null,null,,30%,,,Marketing,B2B,null
+125,84,Users/accounts from North America,"IFS(
+D2=""US"",""North America"",
+D2=""CA"",""North America"",
+D2=""IN"",""India"",
+
+OR(D2=""SG"",D2=""MY"",D2=""ID"",D2=""TH"",D2=""VN"",D2=""PH""),""Southeast Asia"",
+
+OR(D2=""AU"",D2=""NZ"",D2=""JP"",D2=""KR"",D2=""CN"",D2=""HK"",D2=""TW""),""rest of APAC"",
+
+OR(D2=""BR"",D2=""MX"",D2=""AR"",D2=""CL"",D2=""CO"",D2=""PE""),""LATAM"",
+
+OR(D2=""AE"",D2=""SA"",D2=""QA"",D2=""KW"",D2=""OM"",D2=""BH"",D2=""IL""),""Middle East"",
+
+OR(D2=""ZA"",D2=""NG"",D2=""KE"",D2=""EG"",D2=""GH"",D2=""MA""),""Africa"",
+
+OR(D2=""UK"",D2=""DE"",D2=""FR"",D2=""NL"",D2=""BE"",D2=""CH"",D2=""AT"",D2=""IE"",D2=""ES"",D2=""PT"",D2=""IT"",D2=""SE"",D2=""NO"",D2=""DK"",D2=""FI""),""Western Europe"",
+
+OR(D2=""PL"",D2=""CZ"",D2=""HU"",D2=""RO"",D2=""BG"",D2=""SK"",D2=""HR"",D2=""SI"",D2=""RS"",D2=""UA""),""Eastern Europe"",
+
+TRUE,""RoW""
+)",,Monthly,,,60%,55%,null,null,,35%,,,Marketing,B2B,null
+126,84,Users/accounts from India,"IFS(
+D2=""US"",""North America"",
+D2=""CA"",""North America"",
+D2=""IN"",""India"",
+
+OR(D2=""SG"",D2=""MY"",D2=""ID"",D2=""TH"",D2=""VN"",D2=""PH""),""Southeast Asia"",
+
+OR(D2=""AU"",D2=""NZ"",D2=""JP"",D2=""KR"",D2=""CN"",D2=""HK"",D2=""TW""),""rest of APAC"",
+
+OR(D2=""BR"",D2=""MX"",D2=""AR"",D2=""CL"",D2=""CO"",D2=""PE""),""LATAM"",
+
+OR(D2=""AE"",D2=""SA"",D2=""QA"",D2=""KW"",D2=""OM"",D2=""BH"",D2=""IL""),""Middle East"",
+
+OR(D2=""ZA"",D2=""NG"",D2=""KE"",D2=""EG"",D2=""GH"",D2=""MA""),""Africa"",
+
+OR(D2=""UK"",D2=""DE"",D2=""FR"",D2=""NL"",D2=""BE"",D2=""CH"",D2=""AT"",D2=""IE"",D2=""ES"",D2=""PT"",D2=""IT"",D2=""SE"",D2=""NO"",D2=""DK"",D2=""FI""),""Western Europe"",
+
+OR(D2=""PL"",D2=""CZ"",D2=""HU"",D2=""RO"",D2=""BG"",D2=""SK"",D2=""HR"",D2=""SI"",D2=""RS"",D2=""UA""),""Eastern Europe"",
+
+TRUE,""RoW""
+)",,Monthly,,,9%,9%,null,null,,5%,,,Marketing,B2B,null
+127,84,Users/accounts from RoW,"IFS(
+D2=""US"",""North America"",
+D2=""CA"",""North America"",
+D2=""IN"",""India"",
+
+OR(D2=""SG"",D2=""MY"",D2=""ID"",D2=""TH"",D2=""VN"",D2=""PH""),""Southeast Asia"",
+
+OR(D2=""AU"",D2=""NZ"",D2=""JP"",D2=""KR"",D2=""CN"",D2=""HK"",D2=""TW""),""rest of APAC"",
+
+OR(D2=""BR"",D2=""MX"",D2=""AR"",D2=""CL"",D2=""CO"",D2=""PE""),""LATAM"",
+
+OR(D2=""AE"",D2=""SA"",D2=""QA"",D2=""KW"",D2=""OM"",D2=""BH"",D2=""IL""),""Middle East"",
+
+OR(D2=""ZA"",D2=""NG"",D2=""KE"",D2=""EG"",D2=""GH"",D2=""MA""),""Africa"",
+
+OR(D2=""UK"",D2=""DE"",D2=""FR"",D2=""NL"",D2=""BE"",D2=""CH"",D2=""AT"",D2=""IE"",D2=""ES"",D2=""PT"",D2=""IT"",D2=""SE"",D2=""NO"",D2=""DK"",D2=""FI""),""Western Europe"",
+
+OR(D2=""PL"",D2=""CZ"",D2=""HU"",D2=""RO"",D2=""BG"",D2=""SK"",D2=""HR"",D2=""SI"",D2=""RS"",D2=""UA""),""Eastern Europe"",
+
+TRUE,""RoW""
+)",,Monthly,,,8%,8%,null,null,,8%,,,Marketing,B2B,null
+128,84,Users/accounts from Eastern Europe,"IFS(
+D2=""US"",""North America"",
+D2=""CA"",""North America"",
+D2=""IN"",""India"",
+
+OR(D2=""SG"",D2=""MY"",D2=""ID"",D2=""TH"",D2=""VN"",D2=""PH""),""Southeast Asia"",
+
+OR(D2=""AU"",D2=""NZ"",D2=""JP"",D2=""KR"",D2=""CN"",D2=""HK"",D2=""TW""),""rest of APAC"",
+
+OR(D2=""BR"",D2=""MX"",D2=""AR"",D2=""CL"",D2=""CO"",D2=""PE""),""LATAM"",
+
+OR(D2=""AE"",D2=""SA"",D2=""QA"",D2=""KW"",D2=""OM"",D2=""BH"",D2=""IL""),""Middle East"",
+
+OR(D2=""ZA"",D2=""NG"",D2=""KE"",D2=""EG"",D2=""GH"",D2=""MA""),""Africa"",
+
+OR(D2=""UK"",D2=""DE"",D2=""FR"",D2=""NL"",D2=""BE"",D2=""CH"",D2=""AT"",D2=""IE"",D2=""ES"",D2=""PT"",D2=""IT"",D2=""SE"",D2=""NO"",D2=""DK"",D2=""FI""),""Western Europe"",
+
+OR(D2=""PL"",D2=""CZ"",D2=""HU"",D2=""RO"",D2=""BG"",D2=""SK"",D2=""HR"",D2=""SI"",D2=""RS"",D2=""UA""),""Eastern Europe"",
+
+TRUE,""RoW""
+)",,Monthly,,,6%,6%,null,null,,6%,,,Marketing,B2B,null
+129,84,Users/accounts from Middle East,"IFS(
+D2=""US"",""North America"",
+D2=""CA"",""North America"",
+D2=""IN"",""India"",
+
+OR(D2=""SG"",D2=""MY"",D2=""ID"",D2=""TH"",D2=""VN"",D2=""PH""),""Southeast Asia"",
+
+OR(D2=""AU"",D2=""NZ"",D2=""JP"",D2=""KR"",D2=""CN"",D2=""HK"",D2=""TW""),""rest of APAC"",
+
+OR(D2=""BR"",D2=""MX"",D2=""AR"",D2=""CL"",D2=""CO"",D2=""PE""),""LATAM"",
+
+OR(D2=""AE"",D2=""SA"",D2=""QA"",D2=""KW"",D2=""OM"",D2=""BH"",D2=""IL""),""Middle East"",
+
+OR(D2=""ZA"",D2=""NG"",D2=""KE"",D2=""EG"",D2=""GH"",D2=""MA""),""Africa"",
+
+OR(D2=""UK"",D2=""DE"",D2=""FR"",D2=""NL"",D2=""BE"",D2=""CH"",D2=""AT"",D2=""IE"",D2=""ES"",D2=""PT"",D2=""IT"",D2=""SE"",D2=""NO"",D2=""DK"",D2=""FI""),""Western Europe"",
+
+OR(D2=""PL"",D2=""CZ"",D2=""HU"",D2=""RO"",D2=""BG"",D2=""SK"",D2=""HR"",D2=""SI"",D2=""RS"",D2=""UA""),""Eastern Europe"",
+
+TRUE,""RoW""
+)",,Monthly,,,4%,4%,null,null,,4%,,,Marketing,B2B,null
+130,84,Users/accounts from rest of APAC,"IFS(
+D2=""US"",""North America"",
+D2=""CA"",""North America"",
+D2=""IN"",""India"",
+
+OR(D2=""SG"",D2=""MY"",D2=""ID"",D2=""TH"",D2=""VN"",D2=""PH""),""Southeast Asia"",
+
+OR(D2=""AU"",D2=""NZ"",D2=""JP"",D2=""KR"",D2=""CN"",D2=""HK"",D2=""TW""),""rest of APAC"",
+
+OR(D2=""BR"",D2=""MX"",D2=""AR"",D2=""CL"",D2=""CO"",D2=""PE""),""LATAM"",
+
+OR(D2=""AE"",D2=""SA"",D2=""QA"",D2=""KW"",D2=""OM"",D2=""BH"",D2=""IL""),""Middle East"",
+
+OR(D2=""ZA"",D2=""NG"",D2=""KE"",D2=""EG"",D2=""GH"",D2=""MA""),""Africa"",
+
+OR(D2=""UK"",D2=""DE"",D2=""FR"",D2=""NL"",D2=""BE"",D2=""CH"",D2=""AT"",D2=""IE"",D2=""ES"",D2=""PT"",D2=""IT"",D2=""SE"",D2=""NO"",D2=""DK"",D2=""FI""),""Western Europe"",
+
+OR(D2=""PL"",D2=""CZ"",D2=""HU"",D2=""RO"",D2=""BG"",D2=""SK"",D2=""HR"",D2=""SI"",D2=""RS"",D2=""UA""),""Eastern Europe"",
+
+TRUE,""RoW""
+)",,Monthly,,,3%,3%,null,null,,3%,,,Marketing,B2B,null
+131,84,Users/accounts from Southeast Asia,"IFS(
+D2=""US"",""North America"",
+D2=""CA"",""North America"",
+D2=""IN"",""India"",
+
+OR(D2=""SG"",D2=""MY"",D2=""ID"",D2=""TH"",D2=""VN"",D2=""PH""),""Southeast Asia"",
+
+OR(D2=""AU"",D2=""NZ"",D2=""JP"",D2=""KR"",D2=""CN"",D2=""HK"",D2=""TW""),""rest of APAC"",
+
+OR(D2=""BR"",D2=""MX"",D2=""AR"",D2=""CL"",D2=""CO"",D2=""PE""),""LATAM"",
+
+OR(D2=""AE"",D2=""SA"",D2=""QA"",D2=""KW"",D2=""OM"",D2=""BH"",D2=""IL""),""Middle East"",
+
+OR(D2=""ZA"",D2=""NG"",D2=""KE"",D2=""EG"",D2=""GH"",D2=""MA""),""Africa"",
+
+OR(D2=""UK"",D2=""DE"",D2=""FR"",D2=""NL"",D2=""BE"",D2=""CH"",D2=""AT"",D2=""IE"",D2=""ES"",D2=""PT"",D2=""IT"",D2=""SE"",D2=""NO"",D2=""DK"",D2=""FI""),""Western Europe"",
+
+OR(D2=""PL"",D2=""CZ"",D2=""HU"",D2=""RO"",D2=""BG"",D2=""SK"",D2=""HR"",D2=""SI"",D2=""RS"",D2=""UA""),""Eastern Europe"",
+
+TRUE,""RoW""
+)",,Monthly,,,3%,3%,null,null,,3%,,,Marketing,B2B,null
+132,84,Users/accounts from Africa,"IFS(
+D2=""US"",""North America"",
+D2=""CA"",""North America"",
+D2=""IN"",""India"",
+
+OR(D2=""SG"",D2=""MY"",D2=""ID"",D2=""TH"",D2=""VN"",D2=""PH""),""Southeast Asia"",
+
+OR(D2=""AU"",D2=""NZ"",D2=""JP"",D2=""KR"",D2=""CN"",D2=""HK"",D2=""TW""),""rest of APAC"",
+
+OR(D2=""BR"",D2=""MX"",D2=""AR"",D2=""CL"",D2=""CO"",D2=""PE""),""LATAM"",
+
+OR(D2=""AE"",D2=""SA"",D2=""QA"",D2=""KW"",D2=""OM"",D2=""BH"",D2=""IL""),""Middle East"",
+
+OR(D2=""ZA"",D2=""NG"",D2=""KE"",D2=""EG"",D2=""GH"",D2=""MA""),""Africa"",
+
+OR(D2=""UK"",D2=""DE"",D2=""FR"",D2=""NL"",D2=""BE"",D2=""CH"",D2=""AT"",D2=""IE"",D2=""ES"",D2=""PT"",D2=""IT"",D2=""SE"",D2=""NO"",D2=""DK"",D2=""FI""),""Western Europe"",
+
+OR(D2=""PL"",D2=""CZ"",D2=""HU"",D2=""RO"",D2=""BG"",D2=""SK"",D2=""HR"",D2=""SI"",D2=""RS"",D2=""UA""),""Eastern Europe"",
+
+TRUE,""RoW""
+)",,Monthly,,,3%,3%,null,null,,3%,,,Marketing,B2B,null
+133,84,Users/accounts from LATAM,"IFS(
+D2=""US"",""North America"",
+D2=""CA"",""North America"",
+D2=""IN"",""India"",
+
+OR(D2=""SG"",D2=""MY"",D2=""ID"",D2=""TH"",D2=""VN"",D2=""PH""),""Southeast Asia"",
+
+OR(D2=""AU"",D2=""NZ"",D2=""JP"",D2=""KR"",D2=""CN"",D2=""HK"",D2=""TW""),""rest of APAC"",
+
+OR(D2=""BR"",D2=""MX"",D2=""AR"",D2=""CL"",D2=""CO"",D2=""PE""),""LATAM"",
+
+OR(D2=""AE"",D2=""SA"",D2=""QA"",D2=""KW"",D2=""OM"",D2=""BH"",D2=""IL""),""Middle East"",
+
+OR(D2=""ZA"",D2=""NG"",D2=""KE"",D2=""EG"",D2=""GH"",D2=""MA""),""Africa"",
+
+OR(D2=""UK"",D2=""DE"",D2=""FR"",D2=""NL"",D2=""BE"",D2=""CH"",D2=""AT"",D2=""IE"",D2=""ES"",D2=""PT"",D2=""IT"",D2=""SE"",D2=""NO"",D2=""DK"",D2=""FI""),""Western Europe"",
+
+OR(D2=""PL"",D2=""CZ"",D2=""HU"",D2=""RO"",D2=""BG"",D2=""SK"",D2=""HR"",D2=""SI"",D2=""RS"",D2=""UA""),""Eastern Europe"",
+
+TRUE,""RoW""
+)",,Monthly,,,2%,2%,null,null,,2%,,,Marketing,B2B,null
+134,84,30D conversion rate by region,converted / signups,,Monthly,,,null,null,null,null,,null,,,Marketing,null,null
+135,84,Signups by region,count,,Monthly,,,null,null,null,null,,null,,,Marketing,null,null
+154,84,traffic share by region,% of total traffic,,Monthly,,,null,null,null,null,,null,,,Marketing,null,null
+164,82,% Sales from Mid-market,null,,Monthly,null,null,33%,33%,null,null,null,40%,null,,null,B2B,null
+165,82,% Sales from Enterprise,null,,Monthly,null,null,33%,33%,null,null,null,25%,null,,null,B2B,null
+166,82,% Sales from SMB,null,,Monthly,null,null,24%,24%,null,null,null,30%,null,,null,B2B,null
+167,82,% Sales from Micro-business,null,,Monthly,null,null,10%,10%,null,null,null,10%,null,,null,B2B,null
+168,88,% Sales from Outbound,null,,Monthly,null,null,3%,3%,null,null,null,10%,null,,null,B2B,null
+169,88,% Sales from inbound,null,,Monthly,null,null,60%,60%,null,null,null,60%,null,,null,B2B,null
+170,88,% Sales from Direct,null,,Monthly,null,null,37%,37%,null,null,null,30%,null,,null,B2B,null
+171,71,average change in pricing (+%),average of all price increases / sum of prices,,Monthly,,,,,null,null,,,,,Marketing,B2B,null
+172,71,Y → M downgrades,count,,Monthly,,,null,null,null,null,,,,,Marketing,null,null
+173,71,Same plan length upgrades,count,,Monthly,,,null,null,null,null,,,,,Marketing,null,null
+174,71,Seat expansion,count,,Monthly,null,null,,,null,null,,,,,null,B2B,null
+175,174,Seat expansion by segment (Mid-market etc.),count,,Monthly,null,null,,,null,null,,,,,null,B2B,null
+176,174,Seat expansion by Channel (inbound/outbound),count,,Monthly,null,null,,,null,null,,,,,null,B2B,null
+177,72,average change in pricing (-%),average of all price decreases / sum of prices,,Monthly,,,,,null,null,,,,,Marketing,B2B,null
+178,72,M → Y upgrades,count,,Monthly,,,null,null,null,null,,,,,Marketing,null,null
+179,72,Same plan length downgrades,count,,Monthly,,,null,null,null,null,,,,,Marketing,null,null
+180,72,Seat contraction,count,,Monthly,null,null,,,null,null,,,,,null,B2B,null
+181,180,Seat contraction by segment (Mid-market etc.),count,,Monthly,null,null,,,null,null,,,,,null,B2B,null
+182,180,Seat contraction by Channel (inbound/outbound),count,,Monthly,null,null,,,null,null,,,,,null,B2B,null
+183,73,NPS,null,,Monthly,,,,,null,null,,,,,Marketing,B2B,null
+184,73,% users/account churn yearly plans,,,Monthly,65%,70%,33%,33%,null,null,-50%,-30%,null,,Marketing,B2B,null
+185,184,Placeholder,null,,Monthly,,,null,null,null,null,,,,,Marketing,null,null
+186,184,Placeholder,null,,Monthly,,,null,null,null,null,,,,,Marketing,null,null
+187,184,Placeholder,null,,Monthly,,,null,null,null,null,,,,,Marketing,null,null
+188,184,Placeholder,null,,Monthly,,,null,null,null,null,,,,,null,B2B,null
+189,184,No. of users/accounts up for renewal per plan,count,,Monthly,,,,,null,null,,,,,null,B2B,null
+193,184,plan usage frequency ,(average WAU)/MAU for that plan,,Monthly,,,null,null,null,null,,,,,Product,B2B,null
+197,187,AI feature adoption,% of total AI plan MAU using feature,“How many users touched the feature?”,Monthly,null,null,,,null,null,,,,,Product,Product,null
+198,187,AI feature usage frequency ,(average WAU)/MAU for that feature,“How often do they use it?”,Monthly,null,null,,,null,null,,,,,Product,Product,null
+199,73,No. users/account churned,,,Monthly,3119,3091,0,5,null,null,-2500,-3,null,,Product,B2B,null
+200,73,No. of users/accounts up for renewal,,,Monthly,6220,5796,44,56,null,null,null,null,null,,null,null,null
+201,36,Lifetime,,,Monthly,18,17,36,36,null,null,18,48,null,,Product,B2B,null

@@ -197,6 +197,15 @@ select:focus{outline:none;border-color:var(--accent)}
       <div class="pill-row" id="root-tabs" style="flex-direction: column; align-items: stretch; gap: 8px; border:none; padding:0; background:transparent;"></div>
     </div>
     
+    <!-- Search -->
+    <div style="padding: 16px; border-bottom: 1px solid var(--border);">
+      <div style="font-size:10px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:12px;">Search</div>
+      <div style="position:relative;">
+        <input type="text" id="metric-search" placeholder="Search for a metric..." oninput="onSearchInput(this.value)" onfocus="onSearchInput(this.value)" autocomplete="off" style="width:100%; padding:8px; border:1px solid var(--border2); border-radius:4px; outline:none; font-family:'Inter',sans-serif; background:var(--canvas); color:var(--text);" />
+        <div id="search-results" style="display:none; position:absolute; top:100%; left:0; right:0; background:var(--panel); border:1px solid var(--border2); border-top:none; border-radius:0 0 4px 4px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); max-height:200px; overflow-y:auto; z-index:1000;"></div>
+      </div>
+    </div>
+    
   </aside>
 
   <!-- MAIN WORKSPACE -->
@@ -567,7 +576,9 @@ function segPass(m) {
 }
 function ownPass(m) {
   if (ownFilter === 'all') return true;
-  return (primaryOwner(m[segFilter + '_own']) || '').includes(ownFilter);
+  const raw = m[segFilter + '_own'] || '';
+  const ownersList = raw.split(',').map(s => s.trim().toLowerCase());
+  return ownersList.includes(ownFilter);
 }
 function nodePass(m) { return segPass(m) && ownPass(m); }
 
@@ -1039,9 +1050,8 @@ function resetAll() {
   ['b2b','both'].forEach(x => document.getElementById('s-'+x).classList.remove('active'));
   document.getElementById('own-sel').value = 'all';
 
-  collapsed.clear();
-  // Fully expanded by default now
-
+  applyDefaultCollapse();
+  
   updateTabsForFilter();
   refresh();
   cy.fit(undefined, 48);
@@ -1062,17 +1072,37 @@ function setSeg(s) {
 }
 function setOwn(v) { 
   ownFilter = v; 
-  if (v !== 'all') doExpandAll();
-  else refresh(); 
+  if (v !== 'all') {
+    doExpandAll();
+  } else {
+    applyDefaultCollapse();
+    refresh(); 
+  }
 }
 function doExpandAll()  { M.forEach(m => collapsed.delete(m.k)); refresh(); }
 function doCollapseAll(){ M.forEach(m => { if (m.pid) collapsed.add(m.k); }); refresh(); }
+function applyDefaultCollapse() {
+  collapsed.clear();
+  M.forEach(m => {
+    if (depthMap[m.k] >= 5) collapsed.add(m.k);
+  });
+}
 
 // ═══════════════════════════════════════════════════════════════
 // OWNER UI — built dynamically from parsed CSV owners
 // ═══════════════════════════════════════════════════════════════
 function buildOwnerUI() {
-  const owners = [...new Set(M.map(m => primaryOwner(m[segFilter + '_own'])).filter(Boolean))].sort();
+  const allOwners = new Set();
+  M.forEach(m => {
+    const raw = m[segFilter + '_own'];
+    if (raw && raw.toLowerCase() !== 'null') {
+      raw.split(',').forEach(o => {
+        const cleaned = o.trim().toLowerCase();
+        if (cleaned) allOwners.add(cleaned);
+      });
+    }
+  });
+  const owners = [...allOwners].sort();
 
   const sel = document.getElementById('own-sel');
   if (sel) {
@@ -1113,11 +1143,7 @@ function initApp(csvText, filename) {
   buildChildMap();
   computeDepths();
 
-  collapsed.clear();
-  // Only show up to 6 levels deep initially (collapse depth 5 and deeper)
-  M.forEach(m => {
-    if (depthMap[m.k] >= 5) collapsed.add(m.k);
-  });
+  applyDefaultCollapse();
   
   updateTabsForFilter();
 
@@ -1171,6 +1197,98 @@ dropZone.addEventListener('drop', e => {
   reader.onload = ev => initApp(ev.target.result, file.name);
   reader.readAsText(file);
 });
+// ═══════════════════════════════════════════════════════════════
+// SEARCH LOGIC
+// ═══════════════════════════════════════════════════════════════
+document.addEventListener('click', (e) => {
+  const res = document.getElementById('search-results');
+  const inp = document.getElementById('metric-search');
+  if (res && inp && e.target !== inp && e.target !== res && !res.contains(e.target)) {
+    res.style.display = 'none';
+  }
+});
+
+function onSearchInput(query) {
+  const res = document.getElementById('search-results');
+  if (!query.trim()) {
+    res.style.display = 'none';
+    return;
+  }
+  
+  const q = query.toLowerCase();
+  const matches = M.filter(m => m.name.toLowerCase().includes(q)).slice(0, 10);
+  
+  if (matches.length === 0) {
+    res.innerHTML = '<div style="padding:8px; font-size:12px; color:var(--muted);">No results found</div>';
+  } else {
+    res.innerHTML = '';
+    matches.forEach(m => {
+      const div = document.createElement('div');
+      div.style.padding = '8px';
+      div.style.fontSize = '12px';
+      div.style.cursor = 'pointer';
+      div.style.borderBottom = '1px solid var(--border)';
+      div.textContent = m.name;
+      div.addEventListener('mouseover', () => div.style.background = 'var(--bg)');
+      div.addEventListener('mouseout', () => div.style.background = 'transparent');
+      div.addEventListener('click', () => {
+        res.style.display = 'none';
+        document.getElementById('metric-search').value = m.name;
+        flyToMetric(m.k);
+      });
+      res.appendChild(div);
+    });
+    res.lastChild.style.borderBottom = 'none';
+  }
+  res.style.display = 'block';
+}
+
+function flyToMetric(k) {
+  const m = M.find(x => x.k === k);
+  if (!m) return;
+
+  const isAvailable = (rootOf[k] === activeRoot) && subtreePass(k);
+
+  if (!isAvailable) {
+    segFilter = 'b2c';
+    ownFilter = 'all';
+    ['b2c','b2b','both'].forEach(x => {
+      const el = document.getElementById('s-'+x);
+      if (x === 'b2c') el.classList.add('active');
+      else el.classList.remove('active');
+    });
+    const sel = document.getElementById('own-sel');
+    if (sel) sel.value = 'all';
+    
+    applyDefaultCollapse();
+    buildOwnerUI();
+    activeRoot = rootOf[k];
+    updateTabsForFilter();
+  }
+
+  // Un-collapse ancestors
+  let curr = m;
+  while (curr && curr.pid) {
+    collapsed.delete(curr.pid);
+    curr = M.find(x => x.k === curr.pid);
+  }
+
+  refresh();
+
+  setTimeout(() => {
+    if (!cy) return;
+    const node = cy.getElementById(k);
+    if (node.length > 0) {
+      cy.animate({
+        center: { eles: node },
+        zoom: 1.5
+      }, {
+        duration: 500
+      });
+    }
+  }, 100);
+}
+
 </script>
 </body>
 </html>

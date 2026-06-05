@@ -899,13 +899,36 @@ function initCy() {
   // Intercept trackpad scroll to pan instead of zoom, and increase pan speed.
   document.getElementById('cy-wrapper').addEventListener('wheel', e => {
     // ctrlKey is true when pinching on a trackpad
-    if (!e.ctrlKey) {
+    // metaKey is true when holding Command on Mac
+    if (!e.ctrlKey && !e.metaKey) {
       e.stopPropagation();
       e.stopImmediatePropagation(); // guarantee cytoscape doesn't see it
       e.preventDefault();
       cy.panBy({ x: -e.deltaX * 2.5, y: -e.deltaY * 2.5 });
     }
   }, { capture: true, passive: false });
+
+  // Add middle-click (scroll press) panning
+  let midPanning = false;
+  let lastMidX = 0, lastMidY = 0;
+  document.getElementById('cy-wrapper').addEventListener('mousedown', e => {
+    if (e.button === 1) { // 1 = middle mouse button
+      e.preventDefault();
+      midPanning = true;
+      lastMidX = e.clientX;
+      lastMidY = e.clientY;
+    }
+  });
+  window.addEventListener('mousemove', e => {
+    if (midPanning) {
+      cy.panBy({ x: e.clientX - lastMidX, y: e.clientY - lastMidY });
+      lastMidX = e.clientX;
+      lastMidY = e.clientY;
+    }
+  });
+  window.addEventListener('mouseup', e => {
+    if (e.button === 1) midPanning = false;
+  });
 
   cy.on('pan zoom', () => {
     const pan = cy.pan();

@@ -1,0 +1,5 @@
+id,parent,metric,formula,why,cadence,B2C value/trend,B2C prev month,B2B value/trend,B2B prev month,B2C + B2B value/trend,B2C +B2B prev month,B2C benchmarks,B2B benchmarks,B2C + B2B benchmarks,benchmark source,B2C owner,B2B owner,B2C + B2B owner
+1,null,Growth and Retention,null,,null,null,null,null,null,null,null,null,null,null,,null,null,null
+2,null,Efficiency,null,,null,null,null,null,null,null,null,null,null,null,,null,null,null
+3,1,Retention,null,,Monthly,80%,75%,85%,82%,82%,78%,75%,80%,null,,Product,Product,Product
+4,2,CAC,null,,Monthly,$50,$55,$100,$110,$75,$82,$60,$120,null,,Marketing,Marketing,Marketing
